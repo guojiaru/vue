@@ -6,7 +6,10 @@ import VueProgressBar from 'vue-progressbar'
 
 import router from './router'
 import store from './store'
-// import store2 from './store/index2'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+
+Vue.use(ElementUI)
 // main.js是入口文件 
 // 对上面进度条进行配置
 const options = {
@@ -23,6 +26,8 @@ const options = {
   inverse: false
 }
 // 使用
+
+
 
 Vue.use(VueProgressBar, options)
 

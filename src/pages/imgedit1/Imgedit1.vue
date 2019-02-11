@@ -36,8 +36,40 @@
             </div>
 
               <!-- 右侧主内容区 -->
-              <div  class="main-right"  style="width:85%;height:100%;float:left;margin-top:2%">
-
+              <div  class="main-right"  style="width:85%;height:100%;float:left;margin-top:2%;overflow-y:scroll;">
+                     <el-table
+      :data="img"
+      style="width: 100%">
+      <el-table-column
+        prop="image_id"
+        label="图片ID"
+        width="100">
+      </el-table-column>
+      <el-table-column
+        prop="book_id"
+        label="书籍ID"
+        width="100">
+      </el-table-column>
+      <el-table-column
+        prop="level"
+        label="等级"
+        width="100">
+      </el-table-column>
+      <el-table-column
+        prop="url"
+        label="路径"
+        width="400">
+      </el-table-column>
+     
+      <el-table-column
+      
+      label="操作"
+      width="100">
+      <template slot-scope="scope">
+       <el-button type="text" @click="handleClick(scope.row,add)" size="small">选择</el-button>
+      </template>
+    </el-table-column>
+    </el-table>
               </div>
       
       </div>
@@ -54,6 +86,7 @@ export default {
   // 想要动态渲染p
   data(){
       return {
+          
         datamap:{
           9:'https://www.baidu.com',
           11:'https://www.baidu.com'},
@@ -68,7 +101,10 @@ export default {
             children: [{
               id: 9,
               label: '核心数据'
-            }, ]
+            }, {
+              id: 10,
+              label: '三级 1-1-2'
+            }]
           }]
         },{
           id: 2,
@@ -102,45 +138,7 @@ export default {
           children: 'children',
           label: 'label'
         },
- selectList:[
-          {id:1,name:'设备端'},
-          {id:2,name:'移动端'},
-        ],
-      form: {
-        region: "设备端"
-      },
-        radio: '1',
-        cols: [],
-            tableData: [
-            ],
-            pickerOptions2: {
-          shortcuts: [{
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit('pick', [start, end]);
-            }
-          }]
-        },
-         value7:[new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000*15),new Date(new Date().toLocaleDateString())],
+  img: [],
 
     }
   },
@@ -158,16 +156,18 @@ export default {
   // 生命周期钩子
    created(){
 let token=localStorage.getItem('access_token')
-            this.b(token)
+ this.a()
       
         },
       methods: {
-         go(log){
-        this.$router.push(log),
-        localStorage.clear()
+          handleClick(row,add) {
+          console.log(row)
+          localStorage.setItem('addqid',row.url)
+           this.$router.push('/add')
+
+          
       },
          handleNodeClick(data) {
-        console.log(data)
         let id = data.id
         if(data.id===9){
           this.$router.push('/class')
@@ -218,13 +218,13 @@ let token=localStorage.getItem('access_token')
         console.log(key, keyPath);
       },
       async a(){
+          var _this= this
        let result = await http({
       method :'get',
-      url:'/api/report/get_table',
+      url:'/api/questions/get_image_list',
       params: {
-      begin_time: this.value7[0],
-      end_time :this.value7[1],
-      platform: this.id,
+    
+     question_bank:1,
     },
     headers: {
     'Content-Type': 'application/json',
@@ -232,59 +232,27 @@ let token=localStorage.getItem('access_token')
   },
     })
     // 将ajax拿到的值赋值给p
-   this.p=result
-    this.cols=this.p.data.cols
-     this.tableData=this.p.data.tableData
-      },
-         async b(token){
-            var data =new Date(new Date().toLocaleDateString());
-      let data1 =new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000*15;
-      var data2 = new Date(data1)
+  
+      .then(function(result){
+        let p=result.data.result
+    console.log(p)
+ var img1 = []
+        for(var k=0;k<(result.data.result).length;k++){
+         var obj = {}
+          obj.image_id = (result.data.result)[k].image_id;
+          obj.book_id = (result.data.result)[k].book_id;
+          obj.level = (result.data.result)[k].level;
+          obj.url = (result.data.result)[k].url;
+          obj.img = (result.data.result)[k].url;
+          img1[k] = obj;
+          console.log(obj)}
+        _this.img= img1;
+     
 
-       let  Y = data.getFullYear() ;
-       let  M = (data.getMonth()+1 < 10 ? '0'+(data.getMonth()+1) : data.getMonth()+1);
-       let D = (data.getDate()<10 ? '0'+data.getDate():data.getDate());
-         let  Y1 = data2.getFullYear() ;
-       let  M1= (data2.getMonth()+1 < 10 ? '0'+(data2.getMonth()+1) : data2.getMonth()+1);
-       let D1 = (data2.getDate()<10 ? '0'+data2.getDate():data2.getDate());
- 
-       let result = await http({
-      method :'get',
-      url:'/api/report/get_table',
-       headers: {
-    'Content-Type': 'application/json',
-    'Authorization':'jwt'+' '+token
-  },
-      params: {
-      begin_time:Y1+M1+D1,
-      end_time :Y+M+D,
-      platform:1,
-    }
-    })
-    // 将ajax拿到的值赋值给p
-   this.p=result
-    this.cols=this.p.data.cols
-     this.tableData=this.p.data.tableData
-         },
-              async c(){
-       let result = await http({
-      method :'get',
-      url:'/api/report/download',
-      params: {
-      begin_time: this.value7[0],
-      end_time :this.value7[1],
-      platform: this.id,
-    },
-    headers: {
-    'Content-Type': 'application/json',
-    'Authorization':'jwt'+'p'+localStorage.getItem('access_token')
-  },
-    })
-    // 将ajax拿到的值赋值给p
-   this.p=result
-    this.cols=this.p.data.cols
-     this.tableData=this.p.data.tableData
+      })
       },
+    
+             
          handleCurrentChange(row, event, column) {
             console.log(row, event, column, event.currentTarget);
         },

@@ -1,9 +1,12 @@
 import axios from 'axios'
-export default ({method, url, params})=>{
+export default ({method, url, params,headers,data,body})=>{
     return axios({
         method,
         url,
-        params
+        params,
+        headers,
+        data,
+        body
     })
     .then(result =>{
         return result.data

@@ -37,7 +37,34 @@
 
               <!-- 右侧主内容区 -->
               <div  class="main-right"  style="width:85%;height:100%;float:left;margin-top:2%">
-
+                <el-form ref="form" :model="form" label-width="80px">
+                <el-form-item label="book_id">
+                    <el-input v-model="form.book_id"></el-input>
+                </el-form-item>
+                <el-form-item label="describe">
+                    <el-input v-model="form.describe"></el-input>
+                </el-form-item>
+                <el-form-item label="level">
+                    <el-input v-model="form.level"></el-input>
+                </el-form-item>
+                <el-form-item label="audio">
+                   
+                    <el-button@click="muiscPlay1(form.url)"  type="text" size="small">试听</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-upload
+                    class="avatar-uploader"
+                    action="http://10.100.38.81:80/api/commons/upload"
+                    :show-file-list="false"
+                    :headers="headers"
+                    :on-success="handleAvatarSuccess">
+                    <i  class="el-icon-plus avatar-uploader-icon">请选择音频</i>
+                   
+                </el-upload>
+                    <el-button type="primary" @click="onSubmit">立即创建</el-button>
+                    <el-button>取消</el-button>
+                </el-form-item>
+                </el-form>
               </div>
       
       </div>
@@ -54,6 +81,28 @@ export default {
   // 想要动态渲染p
   data(){
       return {
+         imageUrl: '',
+         imgUrl:'',
+         form: {
+                name: '',
+                region: '',
+                date1: '',
+                date2: '',
+                delivery: false,
+                type: [],
+                resource: '',
+                desc: '',
+                book_id: '',
+                create_time: "",
+                describe: "",
+                id: '',
+                image_id: "",
+                is_online: '',
+                level: '',
+                status: '',
+                update_time: "",
+                url: "",
+                },
         datamap:{
           9:'https://www.baidu.com',
           11:'https://www.baidu.com'},
@@ -101,14 +150,12 @@ export default {
         defaultProps: {
           children: 'children',
           label: 'label'
-        },
- selectList:[
-          {id:1,name:'设备端'},
-          {id:2,name:'移动端'},
-        ],
-      form: {
-        region: "设备端"
-      },
+                },
+        selectList:[
+                {id:1,name:'设备端'},
+                {id:2,name:'移动端'},
+                ],
+   
         radio: '1',
         cols: [],
             tableData: [
@@ -154,17 +201,101 @@ export default {
   components: {
    
   },
+  computed:{
+    headers(){
+      return {
+        'Authorization':'jwt'+' '+localStorage.getItem('access_token')
+      } 
+    }
+  },
 
   // 生命周期钩子
    created(){
-let token=localStorage.getItem('access_token')
-            this.b(token)
+           
+             if ((this.$store.state.editImg).length!==0){
+              console.log(this.$store.state.editImg)
+              this.form.book_id = this.$store.state.editAudio.book_id
+             this.form.audio_id = this.$store.state.editAudio.audio_id
+             this.form.url = this.$store.state.editAudio.url
+             this.form.describe = this.$store.state.editAudio.describe
+              this.form.level = this.$store.state.editAudio.level
+              
+          }else{
+             this.form.book_id = this.$store.state.editAudio.book_id
+             this.form.audio_id = this.$store.state.editAudio.audio_id
+             this.form.url = this.$store.state.editAudio.url
+             this.form.describe = this.$store.state.editAudio.describe
+              this.form.level = this.$store.state.editAudio.level
+              
+          }
       
         },
       methods: {
-         go(log){
+             muiscPlay1(r){
+        console.log(r)
+        this.gamemuiscs1 = new Audio(r);
+        this.gamemuiscs1.play();
+      },
+             gomusic(){
+                var obj = {}
+                obj.book_id =  this.form.book_id;
+                obj.audio_id =  this.form.audio_id;
+                obj.url =  this.form.url;
+                 obj.describe =  this.form.describe;
+                   obj.level =  this.form.level;
+                
+                obj.source = 6;
+               this.$router.push({name:'musicedit',params:obj})
+               this.$store.dispatch('editAudio',this.$route.params ); 
+               console.log(this.$store.state.editAudio)
+          },
+          beforeAvatarUpload(file) {
+        const isJPG = file.type === 'image/jpeg';
+        const isLt2M = file.size / 1024 / 1024 < 2;
+
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG 格式!');
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!');
+        }
+        return isJPG && isLt2M;
+      },
+      handleAvatarSuccess(res, file) {
+        this.imageUrl = URL.createObjectURL(file.raw);
+        this.imgUrl = res.data
+        console.log(this.imgUrl)
+      },
+ 
+     go(log){
         this.$router.push(log),
         localStorage.clear()
+      },
+      async onSubmit() {
+        var obj = {}
+          obj.audio_id = this.$store.state.editAudio.audio_id ;
+          obj.book_id = this.$store.state.editAudio.book_id;
+          obj.describe = this.$store.state.editAudio.describe;
+          obj.level = this.$store.state.editAudio.level;
+          obj.url = this.$store.state.editAudio.url;
+        let result = await http({
+          method :'post',
+          url:'/api/questions/edit_audio',
+          data: {
+          book_id :  obj.book_id,
+         describe :  obj.describe,
+          level : obj.level,
+          url :obj.url,
+          audio_id:obj.audio_id,
+          question_bank:1
+        },
+        headers: {
+        'Content-Type': 'application/json',
+        'Authorization':'jwt'+' '+localStorage.getItem('access_token')
+      },
+    })
+      this.$router.push({name:'audiomanagement',params:this.$store.state.editAudio})
+     console.log(this.$store.state.editAudio)
       },
          handleNodeClick(data) {
         console.log(data)
@@ -195,6 +326,7 @@ let token=localStorage.getItem('access_token')
       
        
       },
+
    filterNode(value, data) {
         if (!value) return true;
         return data.label.indexOf(value) !== -1;
@@ -305,6 +437,28 @@ el-col el-col-12
     height:100%;
     width:100%;
   }
-
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 
 </style>

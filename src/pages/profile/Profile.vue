@@ -1,173 +1,598 @@
 <template>
-  <div>
-    <div class="logo">
-      <img src="http://www.91jm.com/resource/images/new/logo-v2.png"/>
-    </div>
-    <div class="input">
-        <div class="input1">
-            <input type="text" placeholder="手机号码" v-model="items.text" ref="count">
-            <div class="svg">
-                <svg t="1541682707441" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2597" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="22"><path d="M907.264 966.656H114.688c-16.384 0-32.768-8.192-43.008-20.48-10.24-14.336-14.336-30.72-10.24-47.104 40.96-208.896 210.944-364.544 415.744-380.928 68.608 0 142.848 8.704 217.088 38.912 21.504 8.704 28.672 14.336 40.96 20.48 118.784 67.584 200.704 184.32 227.328 321.536 4.096 16.384 0 32.768-12.288 47.104-10.24 12.288-26.624 20.48-43.008 20.48z" fill="#bfbfbf" p-id="2598"></path><path d="M115.712 933.376c-6.656 0-12.8-2.56-16.384-7.168-0.512-0.512-0.512-1.024-1.024-1.536-5.12-5.12-5.632-13.824-4.608-18.944 37.888-194.56 197.12-340.48 387.584-354.304h15.36c91.648 0 179.712 28.672 222.72 55.808C832 674.816 907.264 780.8 930.816 905.728c1.024 7.168-0.512 13.824-5.632 20.48-3.584 4.608-9.728 7.168-16.384 7.168H115.712z" fill="#bfbfbf" p-id="2599"></path><path d="M496.64 563.712c89.088 0 174.592 27.648 216.064 53.76h0.512c109.568 65.024 182.272 167.936 204.8 289.792 0.512 2.56 0.512 6.144-3.584 10.752-0.512 1.024-3.072 2.048-6.144 2.048H115.712c-3.072 0-5.632-1.024-6.144-2.048-0.512-1.024-1.536-2.048-2.56-2.56-1.024-1.024-2.048-4.096-1.024-7.68 36.864-188.928 190.976-330.24 375.808-344.064 4.608 0.512 9.728 0 14.848 0m0-25.6c-5.12 0-10.752 0-15.872 0.512C284.16 552.96 120.32 702.464 81.408 903.168c-2.048 10.24 0 22.528 8.192 30.72 6.144 8.192 16.384 12.288 26.624 12.288H908.8c10.24 0 20.48-4.096 26.624-12.288 6.144-8.192 10.24-18.432 8.192-30.72-24.576-131.072-102.4-238.592-217.088-307.2-43.52-27.136-132.608-57.856-229.888-57.856zM512 536.576c-129.024 0-235.52-106.496-235.52-235.52S382.976 65.536 512 65.536s235.52 106.496 235.52 235.52S641.024 536.576 512 536.576z" fill="#bfbfbf" p-id="2600"></path><path d="M512 503.296c-111.616 0-202.24-90.624-202.24-202.24S400.384 98.816 512 98.816s202.24 90.624 202.24 202.24-90.624 202.24-202.24 202.24z" fill="#bfbfbf" p-id="2601"></path><path d="M512 111.616c104.448 0 189.44 84.992 189.44 189.44S616.448 490.496 512 490.496s-189.44-84.992-189.44-189.44 84.992-189.44 189.44-189.44m0-25.6c-118.784 0-215.04 96.256-215.04 215.04s96.256 215.04 215.04 215.04 215.04-96.256 215.04-215.04S630.784 86.016 512 86.016z" fill="#bfbfbf" p-id="2602"></path></svg>
+      <div id="app" style="height:100%">
+   <!-- 左侧导航 -->
+    <div class="main-left" style="width:15%;height:100%;background-color: rgb(79, 92, 100);float:left">
+    <el-col :span="12" style="width:100%;height:100%">
+    <el-menu
+      default-active="2"
+      class="el-menu-vertical-demo"
+      @open="handleOpen"
+      @close="handleClose"
+      background-color="#545c64"
+      text-color="#fff"
+      active-text-color="#ffd04b">
+       <el-menu-item index="5">
+      <img src="../../assets/long.png" style="width:20%;height:50%" />
+      <i style="color: rgb(58, 194, 144);margin-left: 10%;">豹豹龙后台系统</i>
+      </el-menu-item>
+      </el-submenu>
+    </el-menu>
+    <el-input
+  placeholder="输入关键字进行过滤"
+  v-model="filterText">
+</el-input>
+ <el-tree
+  class="filter-tree"
+  :data="data2"
+  style="background:rgb(84, 92, 100);color:#000"
+  :props="defaultProps"
+  default-expand-all
+  @node-click="handleNodeClick"
+  :filter-node-method="filterNode"
+  ref="tree2">
+</el-tree>
+  </el-col>
+</el-row>
             </div>
-        </div>
-        <div class="news1"  v-if="state">输入错误</div>
-        <div class="news1"  v-else>输入正确</div>
-        <div class="input1">
-            <input type="password" placeholder="请输入您的密码" v-model="items.text1" ref="count1">
-            <div class="svg">
-                <svg t="1541683400679" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3383" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="22"><path d="M760.384 441.376l0-103.616c0 0-0.032-241.728-241.728-241.728-241.696 0-241.728 241.728-241.728 241.728l0 103.616L173.312 441.376l0 483.488L864 924.864 864 441.376 760.384 441.376zM553.184 708.064l0 113.184-69.056 0 0-113.184c-20.544-11.968-34.528-34.016-34.528-59.488 0-38.176 30.944-69.088 69.056-69.088 38.112 0 69.056 30.912 69.056 69.088C587.744 674.048 573.76 696.096 553.184 708.064M691.328 441.344 345.984 441.344l0-103.136c0.384-28.928 10.56-173.12 172.672-173.12s172.288 144.192 172.672 172.672L691.328 441.344z" p-id="3384" fill="#bfbfbf"></path>
-              </svg>
-            </div>
-          
-        </div>
-        <div class="news1"  v-if="state1">输入错误</div>
-        <div class="news1"  v-else>输入正确</div>
-    </div>
-    <div class="button">
-      <button>
-          用户登录
-      </button>
-    </div>
-    <div class="news">
-      <span class="newscon">
-        <b>您还可以，</b>
-        <i>注册新帐号</i>
-      </span>
-      <span class="newscon">
-        <b>忘记密码，</b>
-        <i>点此使用短信验证码登录</i>
-      </span>
-    </div>
-    <Foot></Foot>
-  </div>
-</template>
-<script>
-// 节流函数
-function debounce(func, wait=500) {
-   let timeout;  // 定时器变量
-    return function(event) {
-        clearTimeout(timeout);  // 每次触发时先清除上一次的定时器,然后重新计时
-        timeout = setTimeout(()=>{
-            console.log(123,this)
-            func.call(this,event)
-        }, wait);  // 指定 xx ms 后触发真正想进行的操作 handler
-    };
-}
 
-import Foot from 'components/common/Foot'
+              <!-- 右侧主内容区 -->
+              <div  class="main-right"  style="width:85%;height:100%;float:left;margin-top:2%;overflow-y:scroll;">
+              <el-button type="primary"  @click="addquestion()">添加</el-button>
+               <el-button type="primary" @click="Batch_online()">发布</el-button>
+              <div >
+                <div style="width:70px;height:40px;float:left;margin_right:5px;line_height:40px;text_align:'center'">题目ID:</div><el-input v-model="question_id" style="width:100px;float:left;margin_right:5px;"></el-input>
+                <div style="width:70px;height:40px;float:left;margin_right:5px;line_height:40px;text_align:'center'">题目等级:</div><el-input v-model="level"style="width:100px;float:left;margin_right:5px;"></></el-input>
+                 <el-button type="primary" @click='check()'>搜索</el-button>
+              </div> 
+              <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-sizes="[10]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="totalItems">
+              </el-pagination>  
+             <el-table
+    :data="question"
+    border
+    style="width: 100%；overflow-y:scroll;">
+    
+    <el-table-column
+      fixed
+      prop="question_id"
+      label="题目Id"
+      width="100">
+    </el-table-column>
+    <el-table-column
+      prop="question_txt"
+      label="题干"
+      width="200">
+    </el-table-column>
+    <el-table-column
+      prop="question_image_url"
+      label="题目图片"
+      width="120">
+      <template slot-scope="scope">
+        <img :src='scope.row.question_image_url' alt="" style="width:50px;height:50px">
+      </template>
+    </el-table-column>
+       <el-table-column
+      prop="book_id"
+      label="书籍Id"
+      width="100">
+      </el-table-column>
+      <el-table-column
+      prop="level"
+      label="等级"
+      width="100">
+       </el-table-column>
+  <el-table-column
+      prop="create_time"
+      label="create_time"
+      width="100">
+       </el-table-column>
+        <el-table-column
+      prop="updata_time"
+      label="create_time"
+      width="100">
+       </el-table-column>
+   
+    <el-table-column
+     
+      label="操作"
+      width="300">
+      <template slot-scope="scope">
+        <el-button type="text" @click="muiscPlay1(scope.row.url)" size="small">试听</el-button>
+        <el-button type="text" @click="handleClick(scope.row)">编辑</el-button>
+        <el-button type="text" @click="downline(scope.row)">下线</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+  
+  
+              </div>
+      
+      </div>
+    </template>
+
+<script>
+// 引入子组件
+
+ import BScroll from 'better-scroll'
+
+// 引入http模块
+import http from 'utils/http'
+
 export default {
-  components: {
-    Foot
-  },
+  // 想要动态渲染p
+
   data(){
-    return{
-     state :true, 
-     state1 :true, 
-     items: {
-        text:'',
-        text1:'',
-      }
+      return {
+       tableDataName: "",
+      tableDataEnd: [],
+      currentPage: 4,
+      pageSize: 2,
+      totalItems: 0,
+      filterTableDataEnd:[],
+      flag:false,
+      level:'',
+      question_id:'',
+      question:[],
+      datamap:{9:'https://www.baidu.com'},
+      message:localStorage.getItem('name'),
+      filterText: '',
+         data2: [{
+          id: 1,
+          label: '数据',
+          children: [{
+            id: 4,
+            label: '报表',
+            children: [{
+              id: 9,
+              label: '核心数据'
+            },]
+          }]
+        },{
+          id: 2,
+          label: '运营',
+          children: [{
+            id: 5,
+            label: '英语习题',
+            children: [{
+              id: 11,
+              label: '问题管理'
+            },
+     {
+              id: 13,
+              label: '答案管理'
+            },
+            {
+              id: 15,
+              label: '图片管理'
+            },
+            {
+              id: 16,
+              label: '音频管理'
+            }],
+          },{
+            id: 6,
+            label: '聊天串',
+     
+          }]
+        }],
+        defaultProps: {
+          children: 'children',
+          label: 'label'
+        },
+ 
+      
+        
     }
   },
-    watch:{   //watch()监听某个值（双向绑定）的变化，从而达到change事件监听的效果
-    items:{
-      // 节流函数的使用
-        handler:debounce(function(){
-            var _this = this;
-            var reg = _this.$refs.count.value
-            var _sum = 11; //字体限制为100个
-            _this.$refs.count.setAttribute("maxlength",_sum);
-            _this.number= _sum- _this.$refs.count.value.length;
-             _this.$refs.count1.setAttribute("maxlength",_sum);
-             _this.number1= _sum- _this.$refs.count1.value.length;
-            if( _this.number == 0 && (/^((13|14|15|17|18)[0-9]{1}\d{8})$/).test(reg)){
-               this.state = false
-            }
-            if( _this.number1 == 0 ){
-               this.state1 = false
-            }
-            console.log(_this.number1)
-            console.log(this.state1)
-        }),
-         deep:true
-        }
+    watch: {
+      filterText(val) {
+        this.$refs.tree2.filter(val);
+      }
     },
-}
+
+  // 子组件集合
+  components: {
+   
+  },
+
+  // 生命周期钩子
+   created(){
+        let token=localStorage.getItem('access_token')
+        this.a()
+       this.totalItems = this.tableDataBegin.length;
+    if (this.totalItems > this.pageSize) {
+      for (let index = 0; index < this.pageSize; index++) {
+        this.tableDataEnd.push(this.tableDataBegin[index]);
+      }
+    } else {
+      this.tableDataEnd = this.tableDataBegin;
+    }
+        },
+      methods: {
+       async Batch_online(){
+         await http({
+        method :'post',
+        url:'/api/questions/create_exercise',
+        data: {
+        question_bank:1
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization':'jwt'+' '+localStorage.getItem('access_token')
+      },
+        })
+       },
+       async downline(row){
+          var arr =[]
+          arr.push(row.question_id)
+          var _this =this
+          console.log(arr)
+          await http({
+        method :'post',
+        url:'/api/questions/un_line_question',
+        data: {
+        question_bank:1,
+        question_id_list:arr
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization':'jwt'+' '+localStorage.getItem('access_token')
+      },
+        })
+        .then(function(result){
+          if(result.code === 200){  
+              _this.$router.go(0)
+            alert('下线成功')
+          }
+        })
+       
+       },
+        addquestion(){
+          this.$router.push('/addquestion')
+      },
+    async a(pageIndex){
+      var _this= this
+      let result = await http({
+        method :'get',
+        url:'/api/questions/questions_list',
+        params: {
+        pageSize:10,
+        pageIndex:pageIndex,
+        question_bank:1
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization':'jwt'+' '+localStorage.getItem('access_token')
+      },
+    })
+    // 将ajax拿到的值赋值给p
+     .then(function(result){
+        console.log(result)
+        var question1 = []
+        for(var k=0;k<(result.data.result).length;k++){
+         var obj = {}
+          obj.answer_describe = (result.data.result)[k].answer_describe;
+          obj.answer_list = (result.data.result)[k].answer_list;
+          obj.answer_style = (result.data.result)[k].answer_style;
+          obj.book_id = (result.data.result)[k].book_id;
+          obj.correct_answer_id = (result.data.result)[k].correct_answer_id;
+          obj.create_time = (result.data.result)[k].create_time;
+          obj.id = (result.data.result)[k].id;
+          obj.is_online = (result.data.result)[k].is_online;
+          obj.level = (result.data.result)[k].level;
+          obj.question_audio_id = (result.data.result)[k].question_audio_id;
+          obj.question_audio_url = (result.data.result)[k].question_audio_url;
+          obj.question_describe = (result.data.result)[k].question_describe;
+          obj.question_id = (result.data.result)[k].question_id;
+          obj.question_image_id = (result.data.result)[k].question_image_id;
+          obj.question_image_url = (result.data.result)[k].question_image_url;
+          obj.question_style = (result.data.result)[k].question_style;
+          obj.question_txt = (result.data.result)[k].question_txt;
+          obj.question_type = (result.data.result)[k].question_type;
+          obj.source= (result.data.result)[k].source;
+          obj.status= (result.data.result)[k].status;
+          obj.type= (result.data.result)[k].type;
+          obj.updata_time= (result.data.result)[k].update_time;
+          question1[k] = obj;
+          //console.log(obj)
+         }
+        _this.question = question1;
+        _this.totalItems = result.data.total
+      })
+      },
+      async check(pageIndex){
+        if(this.question_id !==''){
+              var _this= this
+              let result = await http({
+              method :'get',
+              url:'/api/questions/questions_list',
+              params: {
+              pageSize:10,
+              pageIndex:1,
+              question_bank:1,
+              question_id:this.question_id,
+            },
+              headers: {
+              'Content-Type': 'application/json',
+              'Authorization':'jwt'+' '+localStorage.getItem('access_token')
+            },
+          })
+        // 将ajax拿到的值赋值给p
+            .then(function(result){
+              var question1 = []
+              for(var k=0;k<(result.data.result).length;k++){
+              var obj = {}
+              obj.answer_describe = (result.data.result)[k].answer_describe;
+              obj.answer_list = (result.data.result)[k].answer_list;
+              obj.answer_style = (result.data.result)[k].answer_style;
+              obj.book_id = (result.data.result)[k].book_id;
+              obj.correct_answer_id = (result.data.result)[k].correct_answer_id;
+              obj.create_time = (result.data.result)[k].create_time;
+              obj.id = (result.data.result)[k].id;
+              obj.is_online = (result.data.result)[k].is_online;
+              obj.level = (result.data.result)[k].level;
+              obj.question_audio_id = (result.data.result)[k].question_audio_id;
+              obj.question_audio_url = (result.data.result)[k].question_audio_url;
+              obj.question_describe = (result.data.result)[k].question_describe;
+              obj.question_id = (result.data.result)[k].question_id;
+              obj.question_image_id = (result.data.result)[k].question_image_id;
+              obj.question_image_url = (result.data.result)[k].question_image_url;
+              obj.question_style = (result.data.result)[k].question_style;
+              obj.question_txt = (result.data.result)[k].question_txt;
+              obj.question_type = (result.data.result)[k].question_type;
+              obj.source= (result.data.result)[k].source;
+              obj.status= (result.data.result)[k].status;
+              obj.type= (result.data.result)[k].type;
+              obj.updata_time= (result.data.result)[k].updata_time;
+              question1[k] = obj;
+              console.log(obj)
+            }
+            _this.question = question1;
+          })
+        }
+        if(this.level !== ''){
+          var _this= this
+          let result = await http({
+          method :'get',
+          url:'/api/questions/questions_list',
+          params: {
+          pageSize:10,
+          pageIndex:pageIndex,
+          question_bank:1,
+          level:this.level,
+          },
+           headers: {
+            'Content-Type': 'application/json',
+            'Authorization':'jwt'+' '+localStorage.getItem('access_token')
+           },
+          })
+        // 将ajax拿到的值赋值给p
+        .then(function(result){
+            console.log(result)
+            var question1 = []
+            for(var k=0;k<(result.data.result).length;k++){
+            var obj = {}
+              obj.answer_describe = (result.data.result)[k].answer_describe;
+              obj.answer_list = (result.data.result)[k].answer_list;
+              obj.answer_style = (result.data.result)[k].answer_style;
+              obj.book_id = (result.data.result)[k].book_id;
+              obj.correct_answer_id = (result.data.result)[k].correct_answer_id;
+              obj.create_time = (result.data.result)[k].create_time;
+              obj.id = (result.data.result)[k].id;
+              obj.is_online = (result.data.result)[k].is_online;
+              obj.level = (result.data.result)[k].level;
+              obj.question_audio_id = (result.data.result)[k].question_audio_id;
+              obj.question_audio_url = (result.data.result)[k].question_audio_url;
+              obj.question_describe = (result.data.result)[k].question_describe;
+              obj.question_id = (result.data.result)[k].question_id;
+              obj.question_image_id = (result.data.result)[k].question_image_id;
+              obj.question_image_url = (result.data.result)[k].question_image_url;
+              obj.question_style = (result.data.result)[k].question_style;
+              obj.question_txt = (result.data.result)[k].question_txt;
+              obj.question_type = (result.data.result)[k].question_type;
+              obj.source= (result.data.result)[k].source;
+              obj.status= (result.data.result)[k].status;
+              obj.type= (result.data.result)[k].type;
+              obj.updata_time= (result.data.result)[k].updata_time;
+              question1[k] = obj;
+            }
+            _this.question = question1;
+            console.log(_this.question)
+            _this.totalItems = result.data.total_count
+            
+          })
+            }
+        if(this.question_id !== 0 && this.level !== 0){
+           var _this= this
+          let result = await http({
+          method :'get',
+          url:'/api/questions/questions_list',
+          params: {
+          pageSize:10,
+          pageIndex:pageIndex,
+          question_bank:1,
+          level:this.level,
+          question_id:this.question_id,
+          },
+           headers: {
+            'Content-Type': 'application/json',
+            'Authorization':'jwt'+' '+localStorage.getItem('access_token')
+           },
+          })
+        // 将ajax拿到的值赋值给p
+        .then(function(result){
+            console.log(result)
+            var question1 = []
+            for(var k=0;k<(result.data.result).length;k++){
+            var obj = {}
+              obj.answer_describe = (result.data.result)[k].answer_describe;
+              obj.answer_list = (result.data.result)[k].answer_list;
+              obj.answer_style = (result.data.result)[k].answer_style;
+              obj.book_id = (result.data.result)[k].book_id;
+              obj.correct_answer_id = (result.data.result)[k].correct_answer_id;
+              obj.create_time = (result.data.result)[k].create_time;
+              obj.id = (result.data.result)[k].id;
+              obj.is_online = (result.data.result)[k].is_online;
+              obj.level = (result.data.result)[k].level;
+              obj.question_audio_id = (result.data.result)[k].question_audio_id;
+              obj.question_audio_url = (result.data.result)[k].question_audio_url;
+              obj.question_describe = (result.data.result)[k].question_describe;
+              obj.question_id = (result.data.result)[k].question_id;
+              obj.question_image_id = (result.data.result)[k].question_image_id;
+              obj.question_image_url = (result.data.result)[k].question_image_url;
+              obj.question_style = (result.data.result)[k].question_style;
+              obj.question_txt = (result.data.result)[k].question_txt;
+              obj.question_type = (result.data.result)[k].question_type;
+              obj.source= (result.data.result)[k].source;
+              obj.status= (result.data.result)[k].status;
+              obj.type= (result.data.result)[k].type;
+              obj.updata_time= (result.data.result)[k].updata_time;
+              question1[k] = obj;
+            }
+            _this.question = question1;
+            console.log(_this.question)
+            _this.totalItems = result.data.total
+            
+          })
+        }
+         else{
+          alert('请输入条件')
+        }
+      },
+      muiscPlay1(r){
+        this.gamemuiscs1 = new Audio(r);
+         this.gamemuiscs1.play();
+      },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.handleCurrentChange(this.currentPage);
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.currentPage = val;
+      this.a(val)
+      //需要判断是否检索
+      //if(!this.flag){
+      //this.currentChangePage(this.tableDataEnd)
+     // }else{
+      //this.currentChangePage(this.filterTableDataEnd)      
+      //}
+    }, //组件自带监控当前页码
+    currentChangePage(list) {
+      let from = (this.currentPage - 1) * this.pageSize;
+      let to = this.currentPage * this.pageSize;
+      this.tableDataEnd = [];
+      for (; from < to; from++) {
+        if (list[from]) {
+          this.tableDataEnd.push(list[from]);
+        }
+      }
+    },
+      handleClick(row) {
+          var obj = {}
+          obj.answer_describe =row.answer_describe;
+          obj.answer_list = row.answer_list;
+          obj.answer_style = row.answer_style;
+          obj.book_id = row.book_id;
+          obj.correct_answer_id = row.correct_answer_id;
+          obj.create_time = row.create_time;
+          obj.id = row.id;
+          obj.is_online = row.is_online;
+          obj.level = row.level;
+          obj.question_audio_id = row.question_audio_id;
+          obj.question_audio_url = row.question_audio_url;
+          obj.question_describe = row.question_describe;
+          obj.question_id = row.question_id;
+          obj.question_image_id = row.question_image_id;
+          obj.question_image_url = row.question_image_url;
+          obj.question_style = row.question_style;
+          obj.question_txt =row.question_txt;
+          obj.question_type = row.question_type;
+          obj.source1 = 0;
+          obj.status= row.status;
+
+          this.$router.push({name:'questionedit',params:obj})
+          this.$store.dispatch('saveInfo',this.$route.params )
+      },
+
+         handleNodeClick(data) {
+        let id = data.id
+        if(data.id===9){
+          this.$router.push('/class')
+        }  
+         if(data.id===11){
+           console.log(data.id)
+          this.$router.push('/profile')
+
+        }    
+         if(data.id===13){
+           console.log(data.id)
+          this.$router.push('/answermanagement')
+
+        }  
+         if(data.id===15){
+           console.log(data.id)
+          this.$router.push('/imgmanagement')
+
+        }   
+         if(data.id===16){
+           console.log(data.id)
+          this.$router.push('/audiomanagement')
+
+        }      
+           
+      
+       
+      },
+      filterNode(value, data) {
+        if (!value) return true;
+        return data.label.indexOf(value) !== -1;
+      },
+      formatTime(time) {
+        this.createdate=time;   //date是绑定的值
+      },
+      selectGet(vId){
+        let obj = {};
+        obj = this.selectList.find((item)=>{//这里的selectList就是上面遍历的数据源
+            return item.id === vId;//筛选出匹配数据
+        });
+        console.log(obj.name);//我这边的name就是对应label的
+        this.id=obj.id;
+      },
+    
+      handleOpen(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      handleClose(key, keyPath) {
+        console.log(key, keyPath);
+      },
+   
+        
+        
+        handleEdit(index, row) {
+            console.log(index, row);
+        },
+        handleDelete(index, row) {
+            console.log(index, row);
+        }
+  
+  },
+};
 </script>
 <style lang="stylus" scoped>
-.logo
-  height .7rem
-  width 2.24rem
-  img 
-   height .5rem
-   width 2.04rem
-   margin-left .8rem
-   margin-top .2rem
-   margin-bottom .35rem
-   display block
-.input
-  width 100%
-  height 1.6rem 
-  margin-bottom .1rem
-  display flex
-  flex-direction column
-  align-items center
-  padding .1rem .35rem 
-  justify-content space-between
-  .input1
-    width 100%
-    height .45rem 
-    display flex
-    justify-content space-between
-    input
-      width 80%
-      height 100% 
-      border none
-      text-indent .1rem
-    .svg
-      flex 1
-      background #fff
-      display flex
-      justify-content center
-      align-items center
-.news
-   height .2rem
-.button 
-   width 100%
-   height .45rem 
-   text-align center
-   button
-    width 2.88rem
-    height .45rem 
-    display inline-block
-    background #3598db
-    color #fff
-    font-size .2rem
-.news
-  width 100%
-  height .5rem
-  text-align center
-  margin-top .18rem
-  margin-bottom 2rem
-  .newscon
-    width 2.9rem
-    height .25rem
-    display inline-block
-    b
-     float left
-     height .21rem
-     margin-top .02rem
-     margin-bottom .02rem
-    i
-     float left
-     height .21rem
-     color #3598db
-     margin-top .02rem
-     margin-bottom .02rem
+el-col el-col-12
+  width:100% !import;
+  body{ 
+    height:100%;
+    width:100%;
+  }
 
-
-
-
-   
 
 </style>

@@ -1,20 +1,19 @@
 // home是整体布局，在template里定义其基本结构
 <template>
   <div class="home-wrap">
-    <main>
-      <!-- <Movies></Movies> -->
-      <!-- 加入左右滑动的动画,先在路由中定义对应的meta给router-view加动画标签 -->
+    <main style="width:100%;height:100%;">
+      
         <transition :name="transitionName">
           <!-- 会有一个一下子跳动的效果,用户体验不好,想办法取消,方法是父级相对定位,子级绝对定位,上下左右为0 -->
-          <div id="main-scroll">
-          <router-view class="not"></router-view>
+          <div id="main-scroll" style="width:100%;height:100%;">
+          <router-view class="not" style="width:100%;height:100%;"></router-view>
           </div> 
         </transition>
     <!-- 上面的效果 -->
        <vue-progress-bar></vue-progress-bar>
       
     </main>
-    <TabBar></TabBar>
+
   </div>
 </template>
 // 引入两个子组件

@@ -37,7 +37,35 @@
 
               <!-- 右侧主内容区 -->
               <div  class="main-right"  style="width:85%;height:100%;float:left;margin-top:2%">
+              
+                <el-form ref="form" :model="form" label-width="80px">
+                <el-form-item label="txt">
+                    <el-input v-model="form.txt"></el-input>
+                </el-form-item>
+                <el-form-item label="describe">
+                    <el-input v-model="form.describe"></el-input>
+                </el-form-item>
+                <el-form-item label="image_id">
+                    <el-input v-model="form.image_id"></el-input>
+                </el-form-item>
+                 <el-form-item label="image_url">
+                    <el-input v-model="form.image_url"></el-input>
+                    <template slot-scope="scope">
+                      <img :src='form.image_url' alt="" style="width:50px;height:50px">
+                    </template>
+                </el-form-item>
+                
+                <el-button type="primary" @click="goimg()">添加图片</el-button>
+                <el-form-item label="audio_id">
+                    <el-input v-model="form.audio_id"></el-input>
+                </el-form-item>
+                <el-button type="primary" @click="goaudio()">添加音频</el-button>
 
+                <el-form-item>
+                    <el-button type="primary" @click="onSubmit">立即创建</el-button>
+                    <el-button>取消</el-button>
+                </el-form-item>
+                </el-form>
               </div>
       
       </div>
@@ -54,6 +82,15 @@ export default {
   // 想要动态渲染p
   data(){
       return {
+         imageUrl: '',
+         imgUrl:'',
+         form: {
+               txt:'',
+               audio_id:'',
+               image_id:'',
+               image_url:'',
+               describe:'',
+                },
         datamap:{
           9:'https://www.baidu.com',
           11:'https://www.baidu.com'},
@@ -101,14 +138,12 @@ export default {
         defaultProps: {
           children: 'children',
           label: 'label'
-        },
- selectList:[
-          {id:1,name:'设备端'},
-          {id:2,name:'移动端'},
-        ],
-      form: {
-        region: "设备端"
-      },
+                },
+        selectList:[
+                {id:1,name:'设备端'},
+                {id:2,name:'移动端'},
+                ],
+   
         radio: '1',
         cols: [],
             tableData: [
@@ -154,17 +189,85 @@ export default {
   components: {
    
   },
+  computed:{
+    headers(){
+      return {
+        'Authorization':'jwt'+' '+localStorage.getItem('access_token')
+      } 
+    }
+  },
 
   // 生命周期钩子
    created(){
-let token=localStorage.getItem('access_token')
-            this.b(token)
+          if ((this.$store.state.answerList).length!==0){
+              console.log(this.$store.state.answerList)
+               this.form.txt = this.$store.state.answerList.txt
+               this.form.describe = this.$store.state.answerList.describe
+               this.form.audio_id = this.$store.state.answerList.audio_id
+               this.form.image_id = this.$store.state.answerList.image_id
+               this.form.image_url = this.$store.state.answerList.image_url
+               console.log(this.form)
+          }else{
+              console.log(1)
+              
+          }
+        
       
         },
       methods: {
-         go(log){
+          goimg(){
+                var obj = {}
+                obj.txt = this.form.txt;
+                obj.describe = this.form.describe;
+                obj.audio_id = this.form.audio_id;
+                obj.image_id = this.form.image_id;
+                obj.image_id = this.form.image_url;
+                obj.source = 1;
+               this.$router.push({name:'imgedit',params:obj})
+               this.$store.dispatch('answerList',this.$route.params ); 
+               console.log(this.$store.state.answerList)
+          },
+           goaudio(){
+                var obj = {}
+                obj.txt = this.form.txt;
+                obj.describe = this.form.describe;
+                obj.audio_id = this.form.audio_id;
+                obj.image_id = this.form.image_id;
+                obj.image_url = this.form.image_url;
+                obj.source = 1;
+               this.$router.push({name:'musicedit',params:obj})
+               this.$store.dispatch('answerList',this.$route.params ); 
+               console.log(this.$store.state.answerList)
+          },
+     go(log){
         this.$router.push(log),
         localStorage.clear()
+      },
+      async onSubmit() {
+        var obj = {}
+        obj.txt  = this.form.txt;
+        obj.describe  = this.form.describe;
+        obj.audio_id  = this.form.audio_id;
+        obj.image_id  = this.form.image_id;
+        obj.image_url  = this.form.image_url;
+        let result = await http({
+          method :'post',
+          url:'/api/questions/add_answer',
+          data: {
+            txt: obj.txt,
+            describe: obj.describe,
+           audio_id:obj.audio_id,
+            image_id:obj.image_id,
+            image_url:obj.image_url,
+            question_bank:1
+        },
+        headers: {
+        'Content-Type': 'application/json',
+        'Authorization':'jwt'+' '+localStorage.getItem('access_token')
+      },
+    })
+      this.$router.push('/answermanagement')
+    // console.log(this.$store.state.imgList)
       },
          handleNodeClick(data) {
         console.log(data)
@@ -195,6 +298,7 @@ let token=localStorage.getItem('access_token')
       
        
       },
+
    filterNode(value, data) {
         if (!value) return true;
         return data.label.indexOf(value) !== -1;
@@ -217,74 +321,6 @@ let token=localStorage.getItem('access_token')
       handleClose(key, keyPath) {
         console.log(key, keyPath);
       },
-      async a(){
-       let result = await http({
-      method :'get',
-      url:'/api/report/get_table',
-      params: {
-      begin_time: this.value7[0],
-      end_time :this.value7[1],
-      platform: this.id,
-    },
-    headers: {
-    'Content-Type': 'application/json',
-    'Authorization':'jwt'+' '+localStorage.getItem('access_token')
-  },
-    })
-    // 将ajax拿到的值赋值给p
-   this.p=result
-    this.cols=this.p.data.cols
-     this.tableData=this.p.data.tableData
-      },
-         async b(token){
-            var data =new Date(new Date().toLocaleDateString());
-      let data1 =new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000*15;
-      var data2 = new Date(data1)
-
-       let  Y = data.getFullYear() ;
-       let  M = (data.getMonth()+1 < 10 ? '0'+(data.getMonth()+1) : data.getMonth()+1);
-       let D = (data.getDate()<10 ? '0'+data.getDate():data.getDate());
-         let  Y1 = data2.getFullYear() ;
-       let  M1= (data2.getMonth()+1 < 10 ? '0'+(data2.getMonth()+1) : data2.getMonth()+1);
-       let D1 = (data2.getDate()<10 ? '0'+data2.getDate():data2.getDate());
- 
-       let result = await http({
-      method :'get',
-      url:'/api/report/get_table',
-       headers: {
-    'Content-Type': 'application/json',
-    'Authorization':'jwt'+' '+token
-  },
-      params: {
-      begin_time:Y1+M1+D1,
-      end_time :Y+M+D,
-      platform:1,
-    }
-    })
-    // 将ajax拿到的值赋值给p
-   this.p=result
-    this.cols=this.p.data.cols
-     this.tableData=this.p.data.tableData
-         },
-              async c(){
-       let result = await http({
-      method :'get',
-      url:'/api/report/download',
-      params: {
-      begin_time: this.value7[0],
-      end_time :this.value7[1],
-      platform: this.id,
-    },
-    headers: {
-    'Content-Type': 'application/json',
-    'Authorization':'jwt'+'p'+localStorage.getItem('access_token')
-  },
-    })
-    // 将ajax拿到的值赋值给p
-   this.p=result
-    this.cols=this.p.data.cols
-     this.tableData=this.p.data.tableData
-      },
          handleCurrentChange(row, event, column) {
             console.log(row, event, column, event.currentTarget);
         },
@@ -305,6 +341,28 @@ el-col el-col-12
     height:100%;
     width:100%;
   }
-
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 
 </style>
